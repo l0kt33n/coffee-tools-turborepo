@@ -289,9 +289,6 @@ importers:
       eslint:
         specifier: ^9.23.0
         version: 9.23.0(jiti@1.21.7)
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@20.17.28)(ts-node@10.9.2(@types/node@20.17.28)(typescript@5.5.4))
       typescript:
         specifier: 5.5.4
         version: 5.5.4
