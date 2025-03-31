@@ -14,7 +14,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrewingTimer } from "./BrewingTimer";
-import { predefinedRecipes } from "@/lib/recipe-utils";
+import { predefinedRecipes } from "../lib/recipe-utils";
 import { useRouter } from "next/navigation";
 
 // Mock the next/navigation module

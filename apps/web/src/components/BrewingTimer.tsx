@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Recipe, Step } from "@/types/recipe";
+import { Recipe, Step } from "../types/recipe";
 import {
   formatTime,
   calculateRecipeWithCustomWater,
   predefinedRecipes,
-} from "@/lib/recipe-utils";
+} from "../lib/recipe-utils";
 import { Timer } from "./ui/timer";
 import { StepDisplay } from "./ui/step-display";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";

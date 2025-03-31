@@ -4,10 +4,14 @@
   "private": true,
   "license": "MIT",
   "files": [
+    "browser/jest-preset.ts",
     "node/jest-preset.ts"
   ],
   "dependencies": {
     "jest": "^29.7.0",
-    "ts-jest": "^29.2.5"
+    "ts-jest": "^29.2.6"
+  },
+  "devDependencies": {
+    "jest-environment-jsdom": "^29.7.0"
   }
 }

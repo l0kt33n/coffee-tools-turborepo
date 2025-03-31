@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest --verbose"
+  },
+  "jest": {
+    "preset": "@repo/jest-presets/browser"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

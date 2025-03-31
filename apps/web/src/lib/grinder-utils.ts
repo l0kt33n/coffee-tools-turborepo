@@ -16,7 +16,7 @@ import {
   QueryParams,
   QueryResult,
   SettingFormat,
-} from "@/types/grinder";
+} from "../types/grinder";
 
 // Cache the coffee data
 let coffeeData: CoffeeData | null = null;
@@ -29,7 +29,7 @@ export const loadCoffeeData = async (): Promise<CoffeeData> => {
 
   try {
     // In test environment, use the imported data
-    if (typeof window === "undefined") {
+    if (process.env.NODE_ENV === "test") {
       coffeeData = (await import("../../public/grinderData.json"))
         .default as CoffeeData;
       return coffeeData;
