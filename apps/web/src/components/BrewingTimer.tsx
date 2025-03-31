@@ -26,8 +26,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
   const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number>(0);
   const [totalWaterPoured, setTotalWaterPoured] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<Step | null>(null);
-  const [currentStepWaterTarget, setCurrentStepWaterTarget] =
-    useState<number>(0);
+  const [cumulativeStepTarget, setCumulativeStepTarget] = useState<number>(0);
   const [, setWaterForCurrentStep] = useState<number>(0);
   const [nextStepTime, setNextStepTime] = useState<string>("");
   const [customWaterWeight, setCustomWaterWeight] = useState<number>(0);
@@ -59,7 +58,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
       setTotalWaterPoured(0);
       const firstStep = recipe.steps[0];
       if (firstStep) {
-        setCurrentStepWaterTarget(firstStep.targetWeight);
+        setCumulativeStepTarget(firstStep.targetWeight);
         setCurrentStep(firstStep);
       }
       setWaterForCurrentStep(0);
@@ -134,6 +133,16 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
       }
     }
 
+    // Calculate cumulative target water based on current step index
+    let calculatedCumulativeTarget = 0;
+    for (let i = 0; i <= currentStepIndex; i++) {
+      const step = steps[i];
+      if (step && step.type !== "drawdown") {
+        calculatedCumulativeTarget += step.targetWeight;
+      }
+    }
+    setCumulativeStepTarget(calculatedCumulativeTarget);
+
     // Calculate total water poured based on completed steps
     let calculatedWaterPoured = 0;
     let waterInCurrentStep = 0;
@@ -148,11 +157,8 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
 
     // Add water from current step if not drawdown
     if (currentStep && currentStep.type !== "drawdown") {
-      // Set current step target
-      setCurrentStepWaterTarget(currentStep.targetWeight);
-
       if (currentTimeInSeconds >= currentStep.targetTimeInSeconds + 10) {
-        // If we're more than 10 seconds into the current step, assume all water is poured
+        // If we're more than 10 seconds into the current step, assume all water is poured for calculation
         waterInCurrentStep = currentStep.targetWeight;
         calculatedWaterPoured += waterInCurrentStep;
       } else if (currentTimeInSeconds > currentStep.targetTimeInSeconds) {
@@ -169,8 +175,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
 
       setWaterForCurrentStep(waterInCurrentStep);
     } else {
-      // For drawdown step, show the total water as target
-      setCurrentStepWaterTarget(0);
+      // For drawdown step, keep cumulative target as is, but don't add current water
       setWaterForCurrentStep(0);
     }
 
@@ -219,11 +224,11 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
         ),
       };
     } else {
-      // For active steps, show current step water and target
+      // For active steps, show cumulative step target
       return {
-        targetAmount: currentStepWaterTarget,
+        targetAmount: cumulativeStepTarget,
         progressPercent: Math.round(
-          (totalWaterPoured / (currentStepWaterTarget || 1)) * 100,
+          (totalWaterPoured / (cumulativeStepTarget || 1)) * 100,
         ),
       };
     }
@@ -238,7 +243,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
   return (
     <div className="flex justify-center">
       {selectedRecipe && (
-        <Card className="w-1/2">
+        <Card className="w-full max-w-2xl">
           <CardHeader>
             <CardTitle>{selectedRecipe.name}</CardTitle>
           </CardHeader>
@@ -272,12 +277,6 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
                       {waterStatus.targetAmount}g
                     </div>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Total Water</span>
-                    <div className="text-xl font-bold">
-                      {totalWaterPoured}g / {selectedRecipe.waterWeight}g
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -297,7 +296,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
                   .filter(
                     (step) => step.targetTimeInSeconds > currentTimeInSeconds,
                   )
-                  .slice(0, 2)
+                  .slice(0, 4)
                   .map((step) => (
                     <div
                       key={step.id}
