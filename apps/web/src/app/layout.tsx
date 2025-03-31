@@ -23,13 +23,6 @@ export const metadata: Metadata = {
     "A set of tools for coffee enthusiasts including a grind size calculator and V60 brewing guide",
   applicationName: "Coffee Tools",
   manifest: "/manifest.json",
-  themeColor: "#000000",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
