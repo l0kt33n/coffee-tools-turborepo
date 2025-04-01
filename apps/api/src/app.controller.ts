@@ -39,11 +39,12 @@ export class AppController {
         message: 'Database connection successful!',
         currentTime: result.rows[0],
       };
-    } catch (error) {
-      this.logger.error('Database query failed', error.stack);
+    } catch (error: unknown) {
+      const err = error as Error;
+      this.logger.error('Database query failed', err.stack);
       return {
         message: 'Database connection failed!',
-        error: error.message,
+        error: err.message,
       };
     }
   }

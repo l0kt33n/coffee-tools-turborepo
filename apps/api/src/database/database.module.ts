@@ -32,8 +32,9 @@ import * as schema from './schema';
           client.release();
 
           return drizzle(pool, { schema });
-        } catch (error) {
-          logger.error('Failed to connect to the database:', error.stack);
+        } catch (error: unknown) {
+          const err = error as Error;
+          logger.error('Failed to connect to the database:', err.stack);
           throw error;
         }
       },

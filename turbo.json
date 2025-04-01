@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": ["NODE_ENV"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -16,6 +17,10 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "web#lint": {
+      "dependsOn": ["^lint"],
+      "env": ["NODE_ENV"]
+    },
     "check-types": {
       "dependsOn": ["^check-types"]
     },
@@ -23,11 +28,18 @@
       "cache": false,
       "persistent": true
     },
+    "web#dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV"]
+    },
     "api#dev": {
       "cache": false,
       "persistent": true,
       "env": ["DATABASE_URL"]
     },
-    "test": {}
+    "test": {
+      "env": ["NODE_ENV"]
+    }
   }
 }

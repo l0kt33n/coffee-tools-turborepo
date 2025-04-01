@@ -41,7 +41,6 @@ cd my-turborepo
 pnpm build
 ```
 
-
 ### Docker
 
 This repo is configured to be built with Docker, and Docker compose. To build all apps in this repo:
