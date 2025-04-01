@@ -1,4 +1,4 @@
-import { Module, Global } from '@nestjs/common';
+import { Module, Global, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -12,18 +12,33 @@ import * as schema from './schema';
       provide: 'DATABASE',
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const connectionString =
-          configService.get<string>('DATABASE_URL') ||
-          'postgres://postgres:postgres@localhost:5432/coffee_tools';
+        const logger = new Logger('DatabaseModule');
+        const connectionString = configService.get<string>('DATABASE_URL');
 
-        const pool = new Pool({
-          connectionString,
-        });
+        logger.log('Attempting to connect to the database...');
 
-        return drizzle(pool, { schema });
+        if (!connectionString) {
+          logger.error('DATABASE_URL environment variable is not set.');
+          throw new Error('DATABASE_URL environment variable is not set.');
+        }
+
+        try {
+          const pool = new Pool({
+            connectionString,
+          });
+
+          const client = await pool.connect();
+          logger.log('Database connection established successfully.');
+          client.release();
+
+          return drizzle(pool, { schema });
+        } catch (error) {
+          logger.error('Failed to connect to the database:', error.stack);
+          throw error;
+        }
       },
     },
   ],
   exports: ['DATABASE'],
 })
-export class DatabaseModule {} 
+export class DatabaseModule {}

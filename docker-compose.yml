@@ -24,7 +24,7 @@ services:
     depends_on:
       - database
   database:
-    container_name: database
+    container_name: postgres
     image: postgres:16
     ports:
       - 5432:5432

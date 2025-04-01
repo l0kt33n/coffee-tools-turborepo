@@ -8,6 +8,6 @@ export default {
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/coffee_tools',
+    url: process.env.DATABASE_URL as string,
   },
 } satisfies Config; 
