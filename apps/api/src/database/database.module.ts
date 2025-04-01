@@ -14,7 +14,7 @@ import * as schema from './schema';
       useFactory: async (configService: ConfigService) => {
         const connectionString =
           configService.get<string>('DATABASE_URL') ||
-          'postgres://postgres:postgres@postgres:5432/coffee_tools';
+          'postgres://postgres:postgres@localhost:5432/coffee_tools';
 
         const pool = new Pool({
           connectionString,

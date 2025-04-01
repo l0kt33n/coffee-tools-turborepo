@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -31,6 +31,7 @@
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.6",
     "drizzle-orm": "^0.41.0",
+    "pg": "^8.14.1",
     "postgres": "^3.4.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
