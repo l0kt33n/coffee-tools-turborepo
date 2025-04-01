@@ -1,5 +1,11 @@
 import React from "react";
-import { UseFormReturn, ControllerRenderProps, FieldArrayWithId, UseFieldArrayAppend, UseFieldArrayRemove } from "react-hook-form";
+import {
+  UseFormReturn,
+  ControllerRenderProps,
+  FieldArrayWithId,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
+} from "react-hook-form";
 import { FormValues } from "@/lib/recipe-form-schema";
 import { RecipeMode } from "@/types/recipe";
 import { Input } from "@/components/ui/input";
@@ -55,16 +61,12 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
             <FormControl>
               <Tabs
                 value={field.value}
-                onValueChange={(value) =>
-                  field.onChange(value as RecipeMode)
-                }
+                onValueChange={(value) => field.onChange(value as RecipeMode)}
                 className="w-full"
               >
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="basic">Basic Mode</TabsTrigger>
-                  <TabsTrigger value="advanced">
-                    Advanced Mode
-                  </TabsTrigger>
+                  <TabsTrigger value="advanced">Advanced Mode</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="basic" className="space-y-4 mt-4">
@@ -75,10 +77,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                       render={({
                         field,
                       }: {
-                        field: ControllerRenderProps<
-                          FormValues,
-                          "pours"
-                        >;
+                        field: ControllerRenderProps<FormValues, "pours">;
                       }) => (
                         <FormItem>
                           <FormLabel>Number of Pours</FormLabel>
@@ -104,11 +103,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                         <FormItem>
                           <FormLabel>Bloom Multiplier</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              step="0.1"
-                              {...field}
-                            />
+                            <Input type="number" step="0.1" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -122,10 +117,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                     render={({
                       field,
                     }: {
-                      field: ControllerRenderProps<
-                        FormValues,
-                        "totalBrewTime"
-                      >;
+                      field: ControllerRenderProps<FormValues, "totalBrewTime">;
                     }) => (
                       <FormItem>
                         <FormLabel>Total Brew Time (mm:ss)</FormLabel>
@@ -141,15 +133,10 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                   />
                 </TabsContent>
 
-                <TabsContent
-                  value="advanced"
-                  className="space-y-4 mt-4"
-                >
+                <TabsContent value="advanced" className="space-y-4 mt-4">
                   <div className="rounded-md border p-4">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-sm font-medium">
-                        Custom Pour Steps
-                      </h3>
+                      <h3 className="text-sm font-medium">Custom Pour Steps</h3>
                       <Button
                         type="button"
                         variant="outline"
@@ -162,24 +149,21 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                           })
                         }
                       >
-                        <PlusCircle className="mr-2 h-4 w-4" /> Add
-                        Step
+                        <PlusCircle className="mr-2 h-4 w-4" /> Add Step
                       </Button>
                     </div>
 
                     <div className="text-sm text-slate-500 mb-4">
-                      Define your custom pour steps with specific
-                      water amounts and durations. The first step is
-                      automatically set as the bloom.
+                      Define your custom pour steps with specific water amounts
+                      and durations. The first step is automatically set as the
+                      bloom.
                     </div>
 
                     <div className="space-y-4">
                       {fields.map((field, index) => {
                         // Set the first field as bloom by default
-                        const isBloom = watch(
-                          `advancedSteps.${index}.isBloom`,
-                        );
-                        
+                        const isBloom = watch(`advancedSteps.${index}.isBloom`);
+
                         // Determine if this is the last pour step
                         const isLastPour = index === fields.length - 1;
 
@@ -187,20 +171,20 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                         const prevSteps = advancedSteps?.slice(0, index) || [];
                         const accumulatedWater = prevSteps.reduce(
                           (sum, step) => sum + (step?.waterAmount || 0),
-                          0
+                          0,
                         );
                         const accumulatedTime = prevSteps.reduce(
                           (sum, step) => sum + (step?.duration || 0),
-                          0
+                          0,
                         );
-                        
+
                         // Current step water
-                        const currentStepWater = watch(
-                          `advancedSteps.${index}.waterAmount`
-                        ) || 0;
-                        
+                        const currentStepWater =
+                          watch(`advancedSteps.${index}.waterAmount`) || 0;
+
                         // Total accumulated water including current step
-                        const totalAccumulatedWater = accumulatedWater + currentStepWater;
+                        const totalAccumulatedWater =
+                          accumulatedWater + currentStepWater;
 
                         return (
                           <div
@@ -211,11 +195,9 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                               <h3 className="text-md font-medium">
                                 {isBloom
                                   ? "Bloom Step"
-                                  : `Pour Step ${
-                                      index === 0 ? "1" : index
-                                    }`}
+                                  : `Pour Step ${index === 0 ? "1" : index}`}
                               </h3>
-                              
+
                               {index > 0 && (
                                 <Button
                                   type="button"
@@ -238,7 +220,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                                   min="1"
                                   {...register(
                                     `advancedSteps.${index}.waterAmount` as const,
-                                    { valueAsNumber: true }
+                                    { valueAsNumber: true },
                                   )}
                                   className="h-9"
                                 />
@@ -256,7 +238,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                                   min="1"
                                   {...register(
                                     `advancedSteps.${index}.duration` as const,
-                                    { valueAsNumber: true }
+                                    { valueAsNumber: true },
                                   )}
                                   className="h-9"
                                 />
@@ -272,7 +254,7 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                                 id={`advancedSteps.${index}.isBloom`}
                                 className="h-4 w-4 rounded border-gray-300"
                                 {...register(
-                                  `advancedSteps.${index}.isBloom` as const
+                                  `advancedSteps.${index}.isBloom` as const,
                                 )}
                               />
                               <label
@@ -298,8 +280,9 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
 
                             {isLastPour && !isBloom && (
                               <div className="text-xs text-amber-600 mt-2">
-                                Note: This is the last pour step. Duration here represents 
-                                only the pouring time, not including any drawdown time.
+                                Note: This is the last pour step. Duration here
+                                represents only the pouring time, not including
+                                any drawdown time.
                               </div>
                             )}
                           </div>
@@ -315,24 +298,26 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                       <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>Recipe Water Target:</div>
                         <div className="text-right">{totalWater}g</div>
-                        
+
                         <div>Current Steps Total:</div>
                         <div className="text-right">{advancedTotalWater}g</div>
-                        
+
                         <div className="font-medium">Difference:</div>
-                        <div className={`text-right font-medium ${waterDifference > 0 ? 'text-orange-600' : waterDifference < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                          {waterDifference > 0 
-                            ? `${waterDifference}g needed` 
-                            : waterDifference < 0 
-                              ? `${Math.abs(waterDifference)}g too much` 
+                        <div
+                          className={`text-right font-medium ${waterDifference > 0 ? "text-orange-600" : waterDifference < 0 ? "text-red-600" : "text-green-600"}`}
+                        >
+                          {waterDifference > 0
+                            ? `${waterDifference}g needed`
+                            : waterDifference < 0
+                              ? `${Math.abs(waterDifference)}g too much`
                               : "Perfect match"}
                         </div>
                       </div>
-                      
+
                       {waterDifference !== 0 && (
                         <div className="mt-2 text-xs">
-                          {waterDifference > 0 
-                            ? `You need to add ${waterDifference}g more water to your steps to match the recipe target.` 
+                          {waterDifference > 0
+                            ? `You need to add ${waterDifference}g more water to your steps to match the recipe target.`
                             : `Your steps have ${Math.abs(waterDifference)}g more water than the recipe target.`}
                         </div>
                       )}
@@ -356,7 +341,8 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
                             <div className="space-y-1">
                               <FormLabel>Include Drawdown Step</FormLabel>
                               <FormDescription>
-                                Add a final drawdown step after the last pour. This step has no water amount.
+                                Add a final drawdown step after the last pour.
+                                This step has no water amount.
                               </FormDescription>
                             </div>
                           </FormItem>
@@ -373,4 +359,4 @@ export const RecipeModeTabs: React.FC<RecipeModesTabsProps> = ({
       />
     </div>
   );
-}; 
+};

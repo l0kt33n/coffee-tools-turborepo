@@ -54,9 +54,7 @@ export const BasicRecipeInputs: React.FC<BasicRecipeInputsProps> = ({
             <FormControl>
               <Input placeholder="My Custom Recipe" {...field} />
             </FormControl>
-            <FormDescription>
-              Give your recipe a unique name
-            </FormDescription>
+            <FormDescription>Give your recipe a unique name</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -103,9 +101,7 @@ export const BasicRecipeInputs: React.FC<BasicRecipeInputsProps> = ({
                   <ToggleGroupItem value="coffee">
                     Coffee Weight
                   </ToggleGroupItem>
-                  <ToggleGroupItem value="water">
-                    Total Water
-                  </ToggleGroupItem>
+                  <ToggleGroupItem value="water">Total Water</ToggleGroupItem>
                 </ToggleGroup>
               </FormControl>
               <FormMessage />
@@ -203,10 +199,7 @@ export const BasicRecipeInputs: React.FC<BasicRecipeInputsProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Temperature Unit</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select unit" />
@@ -243,4 +236,4 @@ export const BasicRecipeInputs: React.FC<BasicRecipeInputsProps> = ({
       )}
     </>
   );
-}; 
+};
