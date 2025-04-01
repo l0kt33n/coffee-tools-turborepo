@@ -6,7 +6,6 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
-    restart: always
     ports:
       - 3000:3000
     networks:
@@ -16,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: ./apps/api/Dockerfile
-    restart: always
     ports:
       - 3001:3001
     networks:

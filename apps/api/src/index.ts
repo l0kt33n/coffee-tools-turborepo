@@ -1,9 +1,17 @@
 import { createServer } from "./server";
 import { log } from "@repo/logger";
 
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 3001;
 const server = createServer();
 
-server.listen(port, () => {
-  log(`api running on ${port}`);
-});
+const start = async () => {
+  try {
+    await server.listen({ port, host: '0.0.0.0' });
+    log(`api running on ${port}`);
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
