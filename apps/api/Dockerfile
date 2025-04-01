@@ -37,12 +37,6 @@ COPY --from=builder /app/out/full/ .
 
 RUN pnpm turbo build
 
-# Debug: check what files were built
-RUN ls -la
-RUN ls -la apps || echo "apps directory not found"
-RUN ls -la apps/api/dist || echo "apps/api/dist directory not found"
-RUN find . -type f -name "main.js" || echo "main.js not found in any subdirectory"
-
 FROM base AS runner
 WORKDIR /app
 
@@ -51,10 +45,5 @@ RUN addgroup --system --gid 1001 expressjs
 RUN adduser --system --uid 1001 expressjs
 USER expressjs
 COPY --from=installer /app .
-
-# Debug: List directory contents to verify file paths
-RUN ls -la
-RUN ls -la dist || echo "dist directory not found"
-RUN find . -type f -name "main.js" || echo "main.js not found in any subdirectory"
 
 CMD node apps/api/dist/src/main.js
