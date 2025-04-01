@@ -1,13 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { type DrizzleInstance } from './database/types';
-import { users } from './database/schema';
+import { Injectable, Inject } from "@nestjs/common";
+import { type DrizzleInstance } from "./database/types";
+import { users } from "./database/schema";
 
 @Injectable()
 export class AppService {
-  constructor(@Inject('DATABASE') private db: DrizzleInstance) {}
+  constructor(@Inject("DATABASE") private db: DrizzleInstance) {}
 
   getHello(): string {
-    return 'Hello World!';
+    return "Hello World!";
   }
 
   async getUsers() {

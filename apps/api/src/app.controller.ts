@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Inject, Logger } from '@nestjs/common';
-import { AppService } from './app.service';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from './database/schema';
-import { sql } from 'drizzle-orm';
+import { Controller, Get, Post, Body, Inject, Logger } from "@nestjs/common";
+import { AppService } from "./app.service";
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
+import * as schema from "./database/schema";
+import { sql } from "drizzle-orm";
 
 @Controller()
 export class AppController {
@@ -10,7 +10,7 @@ export class AppController {
 
   constructor(
     private readonly appService: AppService,
-    @Inject('DATABASE') private db: NodePgDatabase<typeof schema>,
+    @Inject("DATABASE") private db: NodePgDatabase<typeof schema>,
   ) {}
 
   @Get()
@@ -18,32 +18,32 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('users')
+  @Get("users")
   getUsers() {
     return this.appService.getUsers();
   }
 
-  @Post('users')
+  @Post("users")
   createUser(@Body() userData: { name: string; email: string }) {
     return this.appService.createUser(userData.name, userData.email);
   }
 
-  @Get('test-db')
+  @Get("test-db")
   async testDbConnection() {
-    this.logger.log('GET /test-db endpoint called');
+    this.logger.log("GET /test-db endpoint called");
     try {
       // Use a simple query that works on any PostgreSQL database
       const result = await this.db.execute(sql`SELECT NOW();`);
-      this.logger.log('Database query successful', result);
+      this.logger.log("Database query successful", result);
       return {
-        message: 'Database connection successful!',
+        message: "Database connection successful!",
         currentTime: result.rows[0],
       };
     } catch (error: unknown) {
       const err = error as Error;
-      this.logger.error('Database query failed', err.stack);
+      this.logger.error("Database query failed", err.stack);
       return {
-        message: 'Database connection failed!',
+        message: "Database connection failed!",
         error: err.message,
       };
     }
