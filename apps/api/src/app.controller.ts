@@ -19,9 +19,4 @@ export class AppController {
   createUser(@Body() userData: { name: string; email: string }) {
     return this.appService.createUser(userData.name, userData.email);
   }
-
-  @Get('test-connection')
-  testConnection() {
-    return this.appService.testDatabaseConnection();
-  }
 }
