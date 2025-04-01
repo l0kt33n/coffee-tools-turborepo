@@ -17,6 +17,23 @@ services:
       dockerfile: ./apps/api/Dockerfile
     ports:
       - 3001:3001
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/coffee_tools
+    networks:
+      - coffee-tools-network
+    depends_on:
+      - postgres
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=coffee_tools
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - coffee-tools-network
 
@@ -24,3 +41,6 @@ services:
 # with each other, by using their container name as a hostname
 networks:
   coffee-tools-network:
+
+volumes:
+  postgres_data:
