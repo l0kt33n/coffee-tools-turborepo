@@ -22,9 +22,9 @@ services:
     networks:
       - coffee-tools-network
     depends_on:
-      - postgres
-  postgres:
-    container_name: postgres
+      - database
+  database:
+    container_name: database
     image: postgres:16
     ports:
       - 5432:5432
