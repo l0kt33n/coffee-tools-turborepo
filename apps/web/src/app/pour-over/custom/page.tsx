@@ -21,7 +21,8 @@ import { recipeFormSchema, FormValues } from "@/lib/recipe-form-schema";
 
 export default function CustomRecipePage() {
   const router = useRouter();
-  const [calculatedCoffeeWeight, setCalculatedCoffeeWeight] = useState<number>(0);
+  const [calculatedCoffeeWeight, setCalculatedCoffeeWeight] =
+    useState<number>(0);
   const [calculatedWaterWeight, setCalculatedWaterWeight] = useState<number>(0);
 
   const form = useForm<FormValues>({
@@ -163,7 +164,8 @@ export default function CustomRecipePage() {
   // Watch for changes in advanced steps to update water total calculation
   const advancedTotalWater =
     watch("advancedSteps")?.reduce(
-      (total: number, step: { waterAmount?: number }) => total + (step?.waterAmount || 0),
+      (total: number, step: { waterAmount?: number }) =>
+        total + (step?.waterAmount || 0),
       0,
     ) || 0;
 
@@ -258,13 +260,13 @@ export default function CustomRecipePage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <BasicRecipeInputs 
+              <BasicRecipeInputs
                 form={form}
                 inputMode={inputMode}
                 calculatedCoffeeWeight={calculatedCoffeeWeight}
                 calculatedWaterWeight={calculatedWaterWeight}
               />
-              
+
               <RecipeModeTabs
                 form={form}
                 fields={fields}

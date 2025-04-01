@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  database:
+    container_name: database_dev # Use a different container name to avoid conflicts
+    image: postgres:16
+    ports:
+      - 5432:5432 # Map host port to container port for local access
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=coffee_tools
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data # Use a different volume name
+    networks:
+      - coffee-tools-network_dev # Use a different network name
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  coffee-tools-network_dev: 

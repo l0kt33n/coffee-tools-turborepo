@@ -33,29 +33,31 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
   return (
     <div className="p-4 mt-6 border rounded-md bg-gray-50 dark:bg-gray-900">
       <h3 className="text-lg font-bold mb-4">Recipe Summary</h3>
-      
+
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
           <div className="text-sm text-gray-500">Coffee</div>
           <div className="font-medium">{totalCoffee}g</div>
         </div>
-        
+
         <div>
           <div className="text-sm text-gray-500">Water</div>
           <div className="font-medium">{totalWater}g</div>
         </div>
-        
+
         <div>
           <div className="text-sm text-gray-500">Ratio</div>
           <div className="font-medium">1:{ratio}</div>
         </div>
-        
+
         <div>
           <div className="text-sm text-gray-500">Temperature</div>
-          <div className="font-medium">{waterTemperature}°{temperatureUnit}</div>
+          <div className="font-medium">
+            {waterTemperature}°{temperatureUnit}
+          </div>
         </div>
       </div>
-      
+
       <h4 className="font-medium mt-4 mb-2">Steps</h4>
       <div className="space-y-2">
         {mode === "advanced" ? (
@@ -64,11 +66,10 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
             {advancedSteps?.map((step, index) => {
               // Calculate cumulative water
               const prevSteps = advancedSteps.slice(0, index);
-              const cumulativeWater = prevSteps.reduce(
-                (sum, s) => sum + (s?.waterAmount || 0),
-                0
-              ) + step.waterAmount;
-              
+              const cumulativeWater =
+                prevSteps.reduce((sum, s) => sum + (s?.waterAmount || 0), 0) +
+                step.waterAmount;
+
               return (
                 <div key={index} className="flex justify-between text-sm">
                   <div>
@@ -82,24 +83,28 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
                       </span>
                     )}
                   </div>
-                  <div>{formatTime(
-                    advancedSteps
-                      .slice(0, index)
-                      .reduce((sum, s) => sum + (s?.duration || 0), 0)
-                  )}</div>
+                  <div>
+                    {formatTime(
+                      advancedSteps
+                        .slice(0, index)
+                        .reduce((sum, s) => sum + (s?.duration || 0), 0),
+                    )}
+                  </div>
                 </div>
               );
             })}
-            
+
             {watchIncludeDrawdown() && (
               <div className="flex justify-between text-sm">
                 <div className="font-medium">Drawdown</div>
-                <div>{formatTime(
-                  advancedSteps?.reduce(
-                    (sum, s) => sum + (s?.duration || 0),
-                    0
-                  ) || 0
-                )}</div>
+                <div>
+                  {formatTime(
+                    advancedSteps?.reduce(
+                      (sum, s) => sum + (s?.duration || 0),
+                      0,
+                    ) || 0,
+                  )}
+                </div>
               </div>
             )}
           </>
@@ -113,11 +118,11 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
               </div>
               <div>0:00</div>
             </div>
-            
+
             {Array.from({ length: pours }).map((_, i) => {
               const pourProgress = bloomWater + waterPerPour * (i + 1);
               const pourStartTime = 45 + i * 30; // Simplified timing
-              
+
               return (
                 <div key={i} className="flex justify-between text-sm">
                   <div>
@@ -131,7 +136,7 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
                 </div>
               );
             })}
-            
+
             <div className="flex justify-between text-sm">
               <div className="font-medium">Drawdown</div>
               <div>{formatTime(45 + pours * 30)}</div>
@@ -141,4 +146,4 @@ export const RecipeSummary: React.FC<RecipeSummaryProps> = ({
       </div>
     </div>
   );
-}; 
+};

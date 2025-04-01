@@ -6,7 +6,6 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
-    restart: always
     ports:
       - 3000:3000
     networks:
@@ -16,9 +15,25 @@ services:
     build:
       context: .
       dockerfile: ./apps/api/Dockerfile
-    restart: always
     ports:
       - 3001:3001
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/coffee_tools
+    networks:
+      - coffee-tools-network
+    depends_on:
+      - database
+  database:
+    container_name: postgres
+    image: postgres:16
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=coffee_tools
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - coffee-tools-network
 
@@ -26,3 +41,6 @@ services:
 # with each other, by using their container name as a hostname
 networks:
   coffee-tools-network:
+
+volumes:
+  postgres_data:

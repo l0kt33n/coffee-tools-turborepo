@@ -66,4 +66,4 @@ export const convertTemperature = (
   } else {
     return Math.round(((temp - 32) * 5) / 9);
   }
-}; 
+};
