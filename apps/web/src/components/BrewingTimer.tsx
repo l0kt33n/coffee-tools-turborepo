@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { debounce } from "lodash";
+import { Button } from "./ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface BrewingTimerProps {
   recipeId: string;
@@ -30,6 +32,8 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
   const [, setWaterForCurrentStep] = useState<number>(0);
   const [nextStepTime, setNextStepTime] = useState<string>("");
   const [customWaterWeight, setCustomWaterWeight] = useState<number>(0);
+  const [customCoffeeWeight, setCustomCoffeeWeight] = useState<number>(0);
+  const [weightInputMode, setWeightInputMode] = useState<"water" | "coffee">("water");
   const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -63,6 +67,7 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
       }
       setWaterForCurrentStep(0);
       setCustomWaterWeight(recipe.waterWeight);
+      setCustomCoffeeWeight(recipe.coffeeWeight);
 
       if (recipe.steps.length > 1) {
         const secondStep = recipe.steps[1];
@@ -199,6 +204,20 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
         waterWeight: weight,
       });
       setSelectedRecipe(customizedRecipe);
+      setCustomCoffeeWeight(customizedRecipe.coffeeWeight);
+    }
+  }, 500);
+
+  // Create debounced version of applyCustomCoffee
+  const debouncedApplyCustomCoffee = debounce((coffeeWeight: number) => {
+    if (coffeeWeight > 0 && originalRecipe && originalRecipe.ratio) {
+      const calculatedWaterWeight = coffeeWeight * originalRecipe.ratio;
+      setCustomWaterWeight(calculatedWaterWeight);
+      
+      const customizedRecipe = calculateRecipeWithCustomWater(originalRecipe, {
+        waterWeight: calculatedWaterWeight,
+      });
+      setSelectedRecipe(customizedRecipe);
     }
   }, 500);
 
@@ -206,8 +225,25 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
   const handleCustomWaterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     setCustomWaterWeight(isNaN(value) ? 0 : value);
+    
     if (!isNaN(value) && value >= 100) {
       debouncedApplyCustomWater(value);
+      
+      // Update coffee weight based on ratio
+      if (originalRecipe && originalRecipe.ratio) {
+        const calculatedCoffee = Math.round(value / originalRecipe.ratio);
+        setCustomCoffeeWeight(calculatedCoffee);
+      }
+    }
+  };
+
+  // Handle coffee weight input change
+  const handleCustomCoffeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    setCustomCoffeeWeight(isNaN(value) ? 0 : value);
+    
+    if (!isNaN(value) && value > 0) {
+      debouncedApplyCustomCoffee(value);
     }
   };
 
@@ -249,18 +285,50 @@ export const BrewingTimer = ({ recipeId }: BrewingTimerProps) => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Label htmlFor="waterWeightBrewing">Total Water Weight: </Label>
-                <Input
-                  id="waterWeightBrewing"
-                  type="number"
-                  value={customWaterWeight}
-                  onChange={handleCustomWaterChange}
-                  min={100}
-                  className="w-24"
-                  disabled={isTimerActive}
-                />
-                <span>g</span>
+              <Tabs value={weightInputMode} onValueChange={(v) => setWeightInputMode(v as "water" | "coffee")}>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="water" disabled={isTimerActive}>Water Weight</TabsTrigger>
+                  <TabsTrigger value="coffee" disabled={isTimerActive}>Coffee Weight</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="water" className="mt-0">
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="waterWeightBrewing" className="min-w-[128px]">Total Water Weight:</Label>
+                    <Input
+                      id="waterWeightBrewing"
+                      type="number"
+                      value={customWaterWeight}
+                      onChange={handleCustomWaterChange}
+                      min={100}
+                      className="w-24"
+                      disabled={isTimerActive}
+                    />
+                    <span>g</span>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="coffee" className="mt-0">
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="coffeeWeightBrewing" className="min-w-[128px]">Coffee Weight:</Label>
+                    <Input
+                      id="coffeeWeightBrewing"
+                      type="number"
+                      value={customCoffeeWeight}
+                      onChange={handleCustomCoffeeChange}
+                      min={5}
+                      className="w-24"
+                      disabled={isTimerActive}
+                    />
+                    <span>g</span>
+                  </div>
+                </TabsContent>
+              </Tabs>
+              
+              <div className="text-sm text-gray-500 flex justify-between px-2">
+                <span>Ratio: 1:{selectedRecipe.ratio}</span>
+                <span>
+                  {customCoffeeWeight}g coffee : {customWaterWeight}g water
+                </span>
               </div>
 
               <Timer
