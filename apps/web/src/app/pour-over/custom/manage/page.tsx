@@ -120,6 +120,13 @@ export default function ManageCustomRecipesPage() {
                     Use This Recipe
                   </Button>
                   <Button
+                    onClick={() => router.push(`/pour-over/custom/edit/${recipe.id}`)}
+                    variant="outline"
+                    size="icon"
+                  >
+                    ✏️
+                  </Button>
+                  <Button
                     onClick={() => handleDelete(recipe.id)}
                     variant="destructive"
                     size="icon"
