@@ -25,6 +25,49 @@ interface PageProps {
   }>;
 }
 
+const convertStepsToFormValues = (steps: Step[] | undefined | null) => {
+  if (!steps) return [];
+  const nonDrawdownSteps = steps.filter(step => step.type !== "drawdown");
+  
+  return nonDrawdownSteps.map((step, index) => {
+    // Calculate duration differently for bloom vs pour steps
+    let duration = 0;
+    
+    if (step.type === "bloom") {
+      // For bloom steps, calculate duration based on the next step's time
+      if (index + 1 < nonDrawdownSteps.length) {
+        const nextStep = nonDrawdownSteps[index + 1];
+        if (nextStep && nextStep.targetTimeInSeconds !== undefined) {
+          duration = nextStep.targetTimeInSeconds - step.targetTimeInSeconds;
+        } else {
+          duration = 45; // Default if next step is missing or has invalid time
+        }
+      } else {
+        duration = 45; // Default for the last step or only step
+      }
+    } else {
+      // For pour steps, calculate based on previous step's time
+      if (index > 0) {
+        const prevStep = nonDrawdownSteps[index - 1];
+        if (prevStep && prevStep.targetTimeInSeconds !== undefined) {
+          duration = step.targetTimeInSeconds - prevStep.targetTimeInSeconds;
+        } else {
+          duration = 30; // Default if prev step is missing or has invalid time
+        }
+      } else {
+        duration = 30; // Default for the first step
+      }
+    }
+    
+    return {
+      waterAmount: step.targetWeight,
+      duration,
+      isBloom: step.type === "bloom",
+      description: step.description
+    };
+  });
+};
+
 export default function EditRecipePage({ params }: PageProps) {
   const router = useRouter();
   const [calculatedCoffeeWeight, setCalculatedCoffeeWeight] = useState<number>(0);
@@ -59,24 +102,19 @@ export default function EditRecipePage({ params }: PageProps) {
       totalBrewTime: recipe?.totalBrewTime ? formatTime(recipe.totalBrewTime) : "2:30",
       inputMode: recipe?.inputMode || "coffee",
       mode: recipe?.mode || "basic",
-      advancedSteps: recipe?.steps?.map(step => {
-        const prevStepTime = step.type === "pour" && recipe.steps ? 
-          recipe.steps[recipe.steps.indexOf(step) - 1]?.targetTimeInSeconds || 0 : 0;
-        return {
-          waterAmount: step.targetWeight,
-          duration: step.targetTimeInSeconds - prevStepTime,
-          isBloom: step.type === "bloom",
-          description: step.description
-        };
-      }) || [
-        { waterAmount: 60, duration: 45, isBloom: true },
-        { waterAmount: 70, duration: 30, isBloom: false },
-        { waterAmount: 70, duration: 30, isBloom: false },
-        { waterAmount: 70, duration: 30, isBloom: false },
-      ],
+      advancedSteps: recipe?.steps ? 
+        convertStepsToFormValues(recipe.steps) : 
+        [
+          { waterAmount: 60, duration: 45, isBloom: true },
+          { waterAmount: 70, duration: 30, isBloom: false },
+          { waterAmount: 70, duration: 30, isBloom: false },
+          { waterAmount: 70, duration: 30, isBloom: false },
+        ],
       waterTemperature: recipe?.waterTemperature || 95,
       temperatureUnit: recipe?.temperatureUnit || "C",
-      includeDrawdown: true,
+      includeDrawdown: recipe?.steps ? 
+        recipe.steps.some(step => step.type === "drawdown") : 
+        true,
     }
   });
 
@@ -92,19 +130,10 @@ export default function EditRecipePage({ params }: PageProps) {
         totalBrewTime: formatTime(recipe.totalBrewTime),
         inputMode: recipe.inputMode || "coffee",
         mode: recipe.mode || "basic",
-        advancedSteps: recipe.steps.map(step => {
-          const prevStepTime = step.type === "pour" ? 
-            recipe.steps[recipe.steps.indexOf(step) - 1]?.targetTimeInSeconds || 0 : 0;
-          return {
-            waterAmount: step.targetWeight,
-            duration: step.targetTimeInSeconds - prevStepTime,
-            isBloom: step.type === "bloom",
-            description: step.description
-          };
-        }),
+        advancedSteps: convertStepsToFormValues(recipe.steps),
         waterTemperature: recipe.waterTemperature || 95,
         temperatureUnit: recipe.temperatureUnit || "C",
-        includeDrawdown: true,
+        includeDrawdown: recipe.steps.some(step => step.type === "drawdown"),
       });
     }
   }, [recipe, form]);
