@@ -31,16 +31,6 @@ export const StepDisplay = ({
     }
   };
 
-  const getWaterStatus = () => {
-    if (step.type === "drawdown") {
-      return { text: "Draining...", class: "text-gray-500" };
-    }
-
-    return { text: `Target: ${step.targetWeight}g`, class: "text-blue-500" };
-  };
-
-  const waterStatus = getWaterStatus();
-
   return (
     <Card className={`w-full ${className}`}>
       <CardContent className="pt-6">
@@ -58,10 +48,6 @@ export const StepDisplay = ({
               {step.description}
             </div>
           )}
-        </div>
-
-        <div className="flex justify-between items-center">
-          <div className={waterStatus.class}>{waterStatus.text}</div>
         </div>
       </CardContent>
     </Card>

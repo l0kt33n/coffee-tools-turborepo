@@ -206,7 +206,7 @@ export default function EditRecipePage({ params }: PageProps) {
             : step.waterAmount / totalWater,
           instruction: step.isBloom
             ? `Pour ${step.waterAmount}g of water to bloom the coffee grounds`
-            : `Pour ${step.waterAmount}g of water in a circular motion (total: ${cumulativeWater}g)`,
+            : `Pour ${step.waterAmount}g of water in a circular motion`,
           description: step.description || undefined,
         };
       });

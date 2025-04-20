@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Recipe } from "@/types/recipe";
+import { Recipe, Step } from "@/types/recipe";
 import {
   Card,
   CardContent,
@@ -22,6 +22,23 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
+const MIGRATION_KEY = "customRecipeMigration_v1_done";
+
+// Function to perform the migration
+const migrateRecipeInstructions = (recipes: Recipe[]): Recipe[] => {
+  return recipes.map((recipe) => {
+    const updatedSteps = recipe.steps.map((step) => {
+      if (step.type === "pour" && step.instruction.includes("(total:")) {
+        // Remove the (total: Xg) part
+        const newInstruction = step.instruction.replace(/\s*\(total: \d+g\)/, "");
+        return { ...step, instruction: newInstruction };
+      }
+      return step;
+    });
+    return { ...recipe, steps: updatedSteps };
+  });
+};
+
 export default function ManageCustomRecipesPage() {
   const router = useRouter();
   const [customRecipes, setCustomRecipes] = useState<Recipe[]>([]);
@@ -30,11 +47,24 @@ export default function ManageCustomRecipesPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedRecipes = localStorage.getItem("customRecipes");
+      const migrationDone = localStorage.getItem(MIGRATION_KEY) === "true";
+
       if (savedRecipes) {
         try {
-          setCustomRecipes(JSON.parse(savedRecipes));
+          let recipes: Recipe[] = JSON.parse(savedRecipes);
+
+          // Run migration if not done yet
+          if (!migrationDone) {
+            console.log("Running custom recipe instruction migration...");
+            recipes = migrateRecipeInstructions(recipes);
+            localStorage.setItem("customRecipes", JSON.stringify(recipes));
+            localStorage.setItem(MIGRATION_KEY, "true");
+            console.log("Migration complete.");
+          }
+
+          setCustomRecipes(recipes);
         } catch (error) {
-          console.error("Error parsing custom recipes:", error);
+          console.error("Error parsing or migrating custom recipes:", error);
         }
       }
     }
